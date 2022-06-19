@@ -1,0 +1,84 @@
+name: aegisub-procles
+base: core20
+version: 3.2.2-snap1
+summary: Advanced subtitle editor
+description: |
+ Originally created as tool to make typesetting, particularly in anime
+ fansubs, a less painful experience, Aegisub has grown into a fully
+ fledged, highly customizable subtitle editor.
+ 
+ It features a lot of convenient tools to help you with timing,
+ typesetting, editing and translating subtitles, as well as a powerful
+ scripting environment called Automation (originally mostly intended for
+ creating karaoke effects, Automation can now be used much else, including
+ creating macros and various other convenient tools).
+ 
+ This is an unofficial snap, which uses wangqr fork of Aegisub. For any bug reports: https://github.com/vcprocles/aegisub-procles-snap
+grade: stable
+confinement: strict
+parts:
+  aegisub-procles:
+    plugin: autotools
+    autotools-configure-parameters: 
+    - --without-alsa
+    source-type: git
+    source: https://github.com/vcprocles/Aegisub
+    build-packages:
+    - libgl-dev
+    - libfreetype6-dev
+    - libfontconfig1-dev
+    - libass-dev
+    - libboost-dev
+    - libboost-chrono-dev
+    - libboost-filesystem-dev
+    - libboost-locale-dev
+    - libboost-regex-dev
+    - libboost-system-dev
+    - libboost-thread-dev
+    - libffms2-dev
+    - libwxgtk3.0-gtk3-dev
+    - intltool
+    - lua5.1
+    - libluajit-5.1-dev
+    - libhunspell-dev
+    - libfftw3-dev
+    - libuchardet-dev
+    - libopenal-dev
+    - libpulse-dev
+    - libicu-dev
+    - autopoint  
+    stage-packages:
+    - libass9
+    - libboost-chrono1.71.0
+    - libboost-filesystem1.71.0
+    - libboost-locale1.71.0
+    - libboost-regex1.71.0-icu66
+    - libboost-thread1.71.0
+    - libffms2-4
+    - libfftw3-double3
+    - libfontconfig1
+    - libgl1
+    - libhunspell-1.7-0
+    - libicu66
+    - libluajit-5.1-2
+    - libpulse0
+    - libwxbase3.0-0v5
+    - libwxgtk3.0-gtk3-0v5
+    - libopenal1
+    - libsndio7.0 
+    - libuchardet0 
+    
+    
+apps:
+  aegisub-procles:
+    extensions: [gnome-3-38]
+    environment:
+      LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/x86_64-linux-gnu/pulseaudio/ #dirty fix for pulse .so being not found
+    command: usr/local/bin/aegisub
+    desktop: usr/local/share/applications/aegisub.desktop
+    common-id: aegisub.desktop
+    plugs:
+      - audio-playback
+      - home
+      - opengl
+      - removable-media
