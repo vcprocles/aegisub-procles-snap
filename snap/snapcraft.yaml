@@ -1,6 +1,6 @@
 name: aegisub-procles
 base: core20
-version: 3.2.2-snap1.1
+version: 3.2.2-snap2
 summary: Advanced subtitle editor
 description: |
  Originally created as tool to make typesetting, particularly in anime
@@ -21,6 +21,8 @@ parts:
     plugin: autotools
     autotools-configure-parameters: 
     - --without-alsa
+    - --without-oss
+    - --without-openal
     source-type: git
     source: https://github.com/vcprocles/Aegisub
     build-packages:
@@ -39,11 +41,10 @@ parts:
     - libwxgtk3.0-gtk3-dev
     - intltool
     - lua5.1
-    - libluajit-5.1-dev
+    - liblua5.1-0-dev
     - libhunspell-dev
     - libfftw3-dev
     - libuchardet-dev
-    - libopenal-dev
     - libpulse-dev
     - libicu-dev
     - autopoint  
@@ -60,13 +61,30 @@ parts:
     - libgl1
     - libhunspell-1.7-0
     - libicu66
-    - libluajit-5.1-2
+    - liblua5.1-0
     - libpulse0
     - libwxbase3.0-0v5
     - libwxgtk3.0-gtk3-0v5
-    - libopenal1
     - libsndio7.0 
     - libuchardet0 
+    
+    filesets:
+      fset: 
+      - usr/bin/*
+      - usr/lib/*
+      - usr/libexec/*
+      - usr/local/*
+      - usr/sbin/*
+      - usr/share/*
+      - -usr/share/doc/*
+      - -usr/share/icons/Adwaita/*
+      - -usr/share/icons/Humanity/*
+      - -usr/share/icons/Humanity-Dark/*
+      - -usr/lib/x86_64-linux-gnu/libLLVM-12.so.1
+      - -usr/lib/x86_64-linux-gnu/dri/*
+      - -usr/lib/x86_64-linux-gnu/libwayland-client.so.0
+    stage: [$fset]
+    prime: [$fset]    
     
     
 apps:
