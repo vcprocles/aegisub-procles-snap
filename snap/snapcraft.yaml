@@ -17,6 +17,14 @@ description: |
 grade: stable
 confinement: strict
 compression: lzo
+architectures:
+      - build-on: amd64
+        run-on: amd64
+      - build-on: arm64
+        run-on: arm64
+      - build-on: armhf
+        run-on: armhf
+       
 parts:
   aegisub-procles:
     plugin: autotools
@@ -68,8 +76,7 @@ parts:
     - libwxbase3.0-0v5
     - libwxgtk3.0-gtk3-0v5
     - libsndio7.0 
-    - libuchardet0 
-    
+    - libuchardet0     
     filesets:
       fset: 
       - usr/bin/*
