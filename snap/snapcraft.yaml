@@ -1,6 +1,6 @@
 name: aegisub-procles
 base: core20
-version: 3.3.3-snap2.2
+version: 3.3.3-snap2.3
 summary: Advanced subtitle editor
 description: |
  Originally created as tool to make typesetting, particularly in anime
@@ -76,7 +76,8 @@ parts:
     - libwxbase3.0-0v5
     - libwxgtk3.0-gtk3-0v5
     - libsndio7.0 
-    - libuchardet0     
+    - libuchardet0
+    - appmenu-gtk3-module
     filesets:
       fset: 
       - usr/bin/*
@@ -86,10 +87,6 @@ parts:
       - usr/sbin/*
       - usr/share/*
       - -usr/share/doc/*
-      - -usr/share/icons/Adwaita/*
-      - -usr/share/icons/Humanity/*
-      - -usr/share/icons/Humanity-Dark/*
-      - -usr/lib/x86_64-linux-gnu/libwayland-client.so.0
     stage: [$fset]
     prime: [$fset]    
     
