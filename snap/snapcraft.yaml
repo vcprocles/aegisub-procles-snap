@@ -32,7 +32,6 @@ parts:
     - --without-alsa
     - --without-oss
     - --without-openal
-    - --datarootdir=/snap/aegisub-procles/current/usr/local/share
     source-type: git
     source: https://github.com/vcprocles/Aegisub
     #source-tag: v3.3.3
