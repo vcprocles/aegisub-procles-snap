@@ -34,7 +34,7 @@ parts:
     - --without-openal
     source-type: git
     source: https://github.com/vcprocles/Aegisub
-    source-tag: v3.3.3
+    #source-tag: v3.3.3
     build-packages:
     - libgl-dev
     - libfreetype6-dev
