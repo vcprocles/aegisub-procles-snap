@@ -1,18 +1,18 @@
 name: aegisub-procles
 base: core20
-version: 3.3.3-snap2.99.2
+version: 3.3.3-snap2.99.3
 summary: Advanced subtitle editor
 description: |
  Originally created as tool to make typesetting, particularly in anime
  fansubs, a less painful experience, Aegisub has grown into a fully
  fledged, highly customizable subtitle editor.
- 
+
  It features a lot of convenient tools to help you with timing,
  typesetting, editing and translating subtitles, as well as a powerful
  scripting environment called Automation (originally mostly intended for
  creating karaoke effects, Automation can now be used much else, including
  creating macros and various other convenient tools).
- 
+
  This is an unofficial snap, which uses wangqr fork of Aegisub. For any bug reports: https://github.com/vcprocles/aegisub-procles-snap
 grade: stable
 confinement: strict
@@ -24,11 +24,11 @@ architectures:
         run-on: arm64
       - build-on: armhf
         run-on: armhf
-       
+
 parts:
   aegisub-procles:
     plugin: autotools
-    autotools-configure-parameters: 
+    autotools-configure-parameters:
     - --without-alsa
     - --without-oss
     - --without-openal
@@ -57,7 +57,7 @@ parts:
     - libuchardet-dev
     - libpulse-dev
     - libicu-dev
-    - autopoint  
+    - autopoint
     stage-packages:
     - libass9
     - libboost-chrono1.71.0
@@ -75,11 +75,11 @@ parts:
     - libpulse0
     - libwxbase3.0-0v5
     - libwxgtk3.0-gtk3-0v5
-    - libsndio7.0 
+    - libsndio7.0
     - libuchardet0
     - appmenu-gtk3-module
     filesets:
-      fset: 
+      fset:
       - usr/bin/*
       - usr/lib/*
       - usr/libexec/*
@@ -88,9 +88,13 @@ parts:
       - usr/share/*
       - -usr/share/doc/*
     stage: [$fset]
-    prime: [$fset]    
-    
-    
+    prime: [$fset]
+  move-scripts:
+    plugin: dump
+    source: .
+    organize:
+      move_scripts.h: bin/
+
 apps:
   aegisub-procles:
     extensions: [gnome-3-38]
@@ -105,3 +109,5 @@ apps:
       - home
       - opengl
       - removable-media
+  aegisub-procles.move-scripts:
+    command: bin/move_scripts.sh
