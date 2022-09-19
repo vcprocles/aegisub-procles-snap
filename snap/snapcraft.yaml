@@ -109,5 +109,5 @@ apps:
       - home
       - opengl
       - removable-media
-  aegisub-procles.move-scripts:
+  move-scripts:
     command: bin/move_scripts.sh
