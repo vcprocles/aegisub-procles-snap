@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "Creating directory for scripts $HOME/aegisub-lua"
+echo "Creating directory for scripts $HOME/lua"
 mkdir $HOME/lua/
 echo "Moving default scripts..."
 cp -r $SNAP/usr/local/share/aegisub/automation/* $HOME/lua/
