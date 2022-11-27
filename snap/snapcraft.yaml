@@ -1,6 +1,6 @@
 name: aegisub-procles
-base: core20
-version: 3.3.3-snap3a
+base: core22
+version: 3.3.3-snap4
 summary: Advanced subtitle editor
 description: |
  Originally created as tool to make typesetting, particularly in anime
@@ -18,12 +18,12 @@ grade: stable
 confinement: strict
 compression: lzo
 architectures:
-      - build-on: amd64
-        run-on: amd64
-      - build-on: arm64
-        run-on: arm64
-      - build-on: armhf
-        run-on: armhf
+      - build-on: [amd64]
+        build-for: [amd64]
+      - build-on: [arm64]
+        build-for: [arm64]
+      - build-on: [armhf]
+        build-for: [armhf]
 
 parts:
   aegisub-procles:
@@ -60,35 +60,34 @@ parts:
     - autopoint
     stage-packages:
     - libass9
-    - libboost-chrono1.71.0
-    - libboost-filesystem1.71.0
-    - libboost-locale1.71.0
-    - libboost-regex1.71.0-icu66
-    - libboost-thread1.71.0
-    - libffms2-4
+    - libboost-chrono1.74.0
+    - libboost-filesystem1.74.0
+    - libboost-locale1.74.0
+    - libboost-regex1.74.0-icu66
+    - libboost-thread1.74.0
+    - libffms2-5
     - libfftw3-double3
     - libfontconfig1
     - libgl1
     - libhunspell-1.7-0
-    - libicu66
+    - libicu70
     - liblua5.1-0
     - libpulse0
     - libwxbase3.0-0v5
     - libwxgtk3.0-gtk3-0v5
     - libsndio7.0
     - libuchardet0
-    - appmenu-gtk3-module
-    filesets:
-      fset:
-      - usr/bin/*
-      - usr/lib/*
-      - usr/libexec/*
-      - usr/local/*
-      - usr/sbin/*
-      - usr/share/*
-      - -usr/share/doc/*
-    stage: [$fset]
-    prime: [$fset]
+#    filesets:
+#      fset:
+#      - usr/bin/*
+#      - usr/lib/*
+#      - usr/libexec/*
+#      - usr/local/*
+#      - usr/sbin/*
+#      - usr/share/*
+#      - -usr/share/doc/*
+#    stage: [$fset]
+#    prime: [$fset]
   move-scripts:
     plugin: dump
     source: .
@@ -97,7 +96,7 @@ parts:
 
 apps:
   aegisub-procles:
-    extensions: [gnome-3-38]
+    extensions: [gnome]
     environment:
       LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/x86_64-linux-gnu/pulseaudio/ #dirty fix for pulse .so being not found
       DISABLE_WAYLAND: 1
