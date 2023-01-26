@@ -1,6 +1,6 @@
 name: aegisub-procles
 base: core22
-version: 3.3.3-snap4.1a
+version: 3.3.3-snap4.1b
 summary: Advanced subtitle editor
 description: |
  Originally created as tool to make typesetting, particularly in anime
@@ -22,9 +22,9 @@ architectures:
         build-for: [amd64]
       - build-on: [arm64]
         build-for: [arm64]
-      #- build-on: [armhf]
-      #  build-for: [armhf]
-      #^arm32 is no more
+      - build-on: [armhf]
+        build-for: [armhf]
+      
 
 parts:
   aegisub-procles:
