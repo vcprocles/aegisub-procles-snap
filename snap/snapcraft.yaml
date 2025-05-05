@@ -1,6 +1,6 @@
 name: aegisub-procles
-base: core22
-version: 3.3.3-snap5a
+base: core24
+version: 3.4.2-snap
 summary: Advanced subtitle editor
 description: |
  Originally created as tool to make typesetting, particularly in anime
@@ -13,32 +13,40 @@ description: |
  creating karaoke effects, Automation can now be used much else, including
  creating macros and various other convenient tools).
 
- This is an unofficial snap, which uses wangqr fork of Aegisub. For any bug reports: https://github.com/vcprocles/aegisub-procles-snap
+ This is an unofficial snap, the developers may not be responsible for any bugs in it. For any bug reports: https://github.com/vcprocles/aegisub-procles-snap
 grade: stable
 confinement: strict
 compression: lzo
-architectures:
-      - build-on: [amd64]
-        build-for: [amd64]
-      - build-on: [arm64]
-        build-for: [arm64]
-      - build-on: [armhf]
-        build-for: [armhf]
+#platforms:
+      #- build-on: [amd64]
+      #  build-for: [amd64]
+      #- build-on: [arm64]
+      #  build-for: [arm64]
+      #- build-on: [armhf]
+      #  build-for: [armhf]
+      #<platform-name>:
+      #build-on: <list-of-arch> | <arch>
+      #build-for: <list-of-arch> | <arch>
       
 
 parts:
   aegisub-procles:
-    plugin: autotools
-    autotools-configure-parameters:
-    - --without-alsa
-    - --without-oss
-    - --without-openal
+    plugin: meson
+    meson-parameters:
+    - --prefix=/usr/local
+    - --buildtype=release
+    - --strip
+    override-prime: |
+      sed -i 's@org.aegisub.Aegisub@/usr/local/share/icons/hicolor/scalable/apps/org.aegisub.Aegisub.svg@g' ../stage/usr/local/share/applications/org.aegisub.Aegisub.desktop
+      snapcraftctl prime
     source-type: git
-    source: https://github.com/vcprocles/Aegisub
-    #source-tag: v3.3.3
+    source: https://github.com/TypesettingTools/Aegisub
+    source-tag: v3.4.2
+    override-build: |
+      snapcraftctl build
     build-packages:
     - libgl-dev
-    - libfreetype6-dev
+    - libfreetype-dev
     - libfontconfig1-dev
     - libass-dev
     - libboost-dev
@@ -49,7 +57,7 @@ parts:
     - libboost-system-dev
     - libboost-thread-dev
     - libffms2-dev
-    - libwxgtk3.0-gtk3-dev
+    - libwxgtk3.2-dev
     - intltool
     - luajit
     - libluajit-5.1-dev
@@ -59,25 +67,26 @@ parts:
     - libpulse-dev
     - libicu-dev
     - autopoint
-    stage-packages:
-    - libass9
-    - libboost-chrono1.74.0
-    - libboost-filesystem1.74.0
-    - libboost-locale1.74.0
-    - libboost-regex1.74.0
-    - libboost-thread1.74.0
-    - libffms2-5
-    - libfftw3-double3
-    - libfontconfig1
-    - libgl1
-    - libhunspell-1.7-0
-    - libicu70
-    - libluajit-5.1-2
-    - libpulse0
-    - libwxbase3.0-0v5
-    - libwxgtk3.0-gtk3-0v5
-    - libsndio7.0
-    - libuchardet0
+    #stage-packages:
+    #- libass9
+    #- libboost-chrono1.83.0
+    #- libboost-filesystem1.83.0
+    #- libboost-locale1.83.0
+    #- libboost-regex1.83.0
+    #- libboost-thread1.83.0
+    #- libffms2-5
+    #- libfftw3-double3
+    #- libfontconfig1
+    #- libgl1
+    #- libhunspell-1.7-0
+    #- libicu74
+    #- libluajit-5.1-2
+    #- libpulse0
+    #- libwxbase3.2-1t64
+    #- libwxgtk3.2-1t64
+    #- libwxgtk-gl3.2-1t64
+    #- libsndio7.0
+    #- libuchardet0
 #    filesets:
 #      fset:
 #      - usr/bin/*
@@ -102,7 +111,7 @@ apps:
       LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/x86_64-linux-gnu/pulseaudio/ #dirty fix for pulse .so being not found
       DISABLE_WAYLAND: 1
     command: usr/local/bin/aegisub
-    desktop: usr/local/share/applications/aegisub.desktop
+    desktop: usr/local/share/applications/org.aegisub.Aegisub.desktop
     common-id: aegisub.desktop
     plugs:
       - audio-playback
