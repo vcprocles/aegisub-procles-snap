@@ -1,6 +1,6 @@
 name: aegisub-procles
 base: core24
-version: 3.4.2-snap
+version: 3.4.2-snap1.1
 summary: Advanced subtitle editor
 description: |
  Originally created as tool to make typesetting, particularly in anime
@@ -67,26 +67,26 @@ parts:
     - libpulse-dev
     - libicu-dev
     - autopoint
-    #stage-packages:
-    #- libass9
-    #- libboost-chrono1.83.0
-    #- libboost-filesystem1.83.0
-    #- libboost-locale1.83.0
-    #- libboost-regex1.83.0
-    #- libboost-thread1.83.0
-    #- libffms2-5
-    #- libfftw3-double3
-    #- libfontconfig1
-    #- libgl1
-    #- libhunspell-1.7-0
-    #- libicu74
-    #- libluajit-5.1-2
-    #- libpulse0
-    #- libwxbase3.2-1t64
-    #- libwxgtk3.2-1t64
-    #- libwxgtk-gl3.2-1t64
-    #- libsndio7.0
-    #- libuchardet0
+    stage-packages:
+    - libass9
+    - libboost-chrono1.83.0
+    - libboost-filesystem1.83.0
+    - libboost-locale1.83.0
+    - libboost-regex1.83.0
+    - libboost-thread1.83.0
+    - libffms2-5
+    - libfftw3-double3
+    - libfontconfig1
+    - libgl1
+    - libhunspell-1.7-0
+    - libicu74
+    - libluajit-5.1-2
+    - libpulse0
+    - libwxbase3.2-1t64
+    - libwxgtk3.2-1t64
+    - libwxgtk-gl3.2-1t64
+    - libsndio7.0
+    - libuchardet0
 #    filesets:
 #      fset:
 #      - usr/bin/*
