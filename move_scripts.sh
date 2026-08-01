@@ -1,9 +1,9 @@
 #!/bin/bash
 HOME_CURRENT="$(dirname "$HOME")/current"
-echo "Creating directory for scripts $HOME_CURRENT/lua"
-mkdir -p "$HOME_CURRENT"/lua/
+echo "Creating directory for scripts $HOME_CURRENT/.aegisub/automation"
+mkdir -p "$HOME_CURRENT"/.aegisub/automation/
 echo "Moving default scripts..."
-cp -r "$SNAP"/usr/local/share/aegisub/automation/* "$HOME_CURRENT"/lua/
+cp -r "$SNAP"/usr/share/aegisub/automation/* "$HOME_CURRENT"/.aegisub/automation/
 echo "Fixing the config..."
 CONFIG_FILE="$HOME_CURRENT/.aegisub/config.json"
 
@@ -15,9 +15,9 @@ fi
 
 #fix the config
 sed -i '/"Automation"[[:space:]]*:[[:space:]]*{/,/}/ {
-    s|"Autoload"[[:space:]]*:.*|"Autoload" : "'"$HOME_CURRENT"'/lua/autoload/",|
-    s|"Base"[[:space:]]*:.*|"Base" : "'"$HOME_CURRENT"'/lua/",|
-    s|"Include"[[:space:]]*:.*|"Include" : "'"$HOME_CURRENT"'/lua/include/"|
+    s|"Autoload"[[:space:]]*:.*|"Autoload" : "'"$HOME_CURRENT"'/.aegisub/automation/autoload/",|
+    s|"Base"[[:space:]]*:.*|"Base" : "'"$HOME_CURRENT"'/.aegisub/automation/",|
+    s|"Include"[[:space:]]*:.*|"Include" : "'"$HOME_CURRENT"'/.aegisub/automation/include/"|
 }' "$CONFIG_FILE"
 
 echo "Successfully updated the Automation paths."

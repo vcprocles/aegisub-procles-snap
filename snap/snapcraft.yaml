@@ -1,6 +1,6 @@
 name: aegisub-procles
 base: core24
-version: 3.4.2-snap2
+version: 3.4.2-snap3
 summary: Advanced subtitle editor
 description: |
  Originally created as tool to make typesetting, particularly in anime
@@ -16,34 +16,77 @@ description: |
  This is an unofficial snap, the developers may not be responsible for any bugs in it. For any bug reports: https://github.com/vcprocles/aegisub-procles-snap
 grade: stable
 confinement: strict
-compression: lzo
-#platforms:
-      #- build-on: [amd64]
-      #  build-for: [amd64]
-      #- build-on: [arm64]
-      #  build-for: [arm64]
-      #- build-on: [armhf]
-      #  build-for: [armhf]
-      #<platform-name>:
-      #build-on: <list-of-arch> | <arch>
-      #build-for: <list-of-arch> | <arch>
+#compression: lzo
+platforms:
+  amd64:
+  arm64:
       
 
 parts:
+  wxwidgets:
+    plugin: cmake
+    source-type: git
+    source: https://github.com/wxWidgets/wxWidgets.git
+    source-tag: v3.2.10 
+    cmake-parameters:
+      - -DCMAKE_INSTALL_PREFIX=/usr
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DwxBUILD_TOOLKIT=gtk3
+      - -DwxUSE_OPENGL=ON
+      - -DwxUSE_GLCANVAS_EGL=ON
+      - -DwxUSE_NANOSVG=OFF
+      - -DwxBUILD_SHARED=ON
+    build-packages:
+      - libgtk-3-dev
+      - libgl-dev
+      - libegl1-mesa-dev
+      - libwayland-dev
+      - libx11-dev
+      - cmake
+      - ninja-build
   aegisub-procles:
+    after: [wxwidgets]
     plugin: meson
+    build-environment:
+      - PATH: "$CRAFT_STAGE/usr/bin:$PATH"
+      - PKG_CONFIG_PATH: "$CRAFT_STAGE/usr/lib/pkgconfig:$CRAFT_STAGE/usr/lib/x86_64-linux-gnu/pkgconfig:$PKG_CONFIG_PATH"
+      - WX_CONFIG: "$CRAFT_STAGE/usr/bin/wx-config"
     meson-parameters:
-    - --prefix=/usr/local
+    - --prefix=/usr/
     - --buildtype=release
     - --strip
+    - -Denable_update_checker=false
+    - -Dsystem_luajit=false
     override-prime: |
-      sed -i 's@org.aegisub.Aegisub@/usr/local/share/icons/hicolor/scalable/apps/org.aegisub.Aegisub.svg@g' ../stage/usr/local/share/applications/org.aegisub.Aegisub.desktop
-      snapcraftctl prime
+      sed -i 's@org.aegisub.Aegisub@/usr/share/icons/hicolor/scalable/apps/org.aegisub.Aegisub.svg@g' ../stage/usr/share/applications/org.aegisub.Aegisub.desktop
+      craftctl default
     source-type: git
     source: https://github.com/TypesettingTools/Aegisub
     source-tag: v3.4.2
+    override-pull: |
+      craftctl default
+      meson subprojects download luajit
+      meson subprojects packagefiles --apply luajit
+      VERSION_SCRIPT="$(find . -name version.sh | head -n 1)"
+      if [ -n "$VERSION_SCRIPT" ]; then
+        cat << 'EOF' > "$VERSION_SCRIPT"
+      #!/bin/sh
+      builddir="$1"
+      version_h_path="${builddir}/git_version.h"
+      cat << 'HDR' > "${version_h_path}"
+      #define BUILD_GIT_VERSION_NUMBER 0
+      #define BUILD_GIT_VERSION_STRING "3.4.2"
+      #define TAGGED_RELEASE 1
+      #define INSTALLER_VERSION "3.4.2"
+      #define RESOURCE_BASE_VERSION 3, 4, 2
+      HDR
+      exit 0
+      EOF
+        chmod +x "$VERSION_SCRIPT"
+      fi
     override-build: |
-      snapcraftctl build
+      cp -a "$CRAFT_STAGE/usr/." /usr/
+      craftctl default
     build-packages:
     - libgl-dev
     - libfreetype-dev
@@ -57,10 +100,7 @@ parts:
     - libboost-system-dev
     - libboost-thread-dev
     - libffms2-dev
-    - libwxgtk3.2-dev
     - intltool
-    - luajit
-    - libluajit-5.1-dev
     - libhunspell-dev
     - libfftw3-dev
     - libuchardet-dev
@@ -68,6 +108,7 @@ parts:
     - libicu-dev
     - autopoint
     stage-packages:
+    - luajit
     - libass9
     - libboost-chrono1.83.0
     - libboost-filesystem1.83.0
@@ -80,43 +121,60 @@ parts:
     - libgl1
     - libhunspell-1.7-0
     - libicu74
-    - libluajit-5.1-2
     - libpulse0
-    - libwxbase3.2-1t64
-    - libwxgtk3.2-1t64
-    - libwxgtk-gl3.2-1t64
     - libsndio7.0
     - libuchardet0
-#    filesets:
-#      fset:
-#      - usr/bin/*
-#      - usr/lib/*
-#      - usr/libexec/*
-#      - usr/local/*
-#      - usr/sbin/*
-#      - usr/share/*
-#      - -usr/share/doc/*
-#    stage: [$fset]
-#    prime: [$fset]
+    # for downloading depcontrol
+    - curl
+    - wget
+    - unzip
+    # for depcontrol itself
+    - binutils
+    # prime:
+    #   - usr/bin/*
+    #   - usr/lib/*
+    #   - usr/libexec/*
+    #   - usr/local/*
+    #   - usr/sbin/*
+    #   - usr/share/*
+    #   - -usr/share/doc/*
+    #   - -usr/share/man/*
+    #   - -usr/share/info/*
+    #   - -usr/share/icons/Adwaita/*
+    #   - -usr/share/icons/Humanity*
+    #   - -usr/share/icons/Yaru*
+    #   - -usr/lib/*/dri/*
+    #   - -usr/lib/*/libLLVM*.so*
+    #   - -usr/lib/*/libwayland-*.so*
   move-scripts:
     plugin: dump
     source: .
     organize:
       move_scripts.sh: bin/
+  install-depcontrol:
+    plugin: dump
+    source: .
+    organize:
+      install_depcontrol.sh: bin/
 
 apps:
   aegisub-procles:
     extensions: [gnome]
     environment:
-      LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/x86_64-linux-gnu/pulseaudio/ #dirty fix for pulse .so being not found
-      DISABLE_WAYLAND: 1
-    command: usr/local/bin/aegisub
-    desktop: usr/local/share/applications/org.aegisub.Aegisub.desktop
+      LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/pulseaudio/ #dirty fix for pulse .so being not found
+      #should fix lua i hope
+      LUA_PATH: "$SNAP_USER_DATA/.aegisub/automation/include/?.lua;$SNAP_USER_DATA/.aegisub/automation/include/?/init.lua;$SNAP/usr/share/aegisub/automation/include/?.lua;$SNAP/usr/share/aegisub/automation/include/?/init.lua;;"
+      LUA_CPATH: "$SNAP_USER_DATA/.aegisub/automation/include/?.so;$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/lua/5.1/?.so;;"
+    command: usr/bin/aegisub
+    desktop: usr/share/applications/org.aegisub.Aegisub.desktop
     common-id: aegisub.desktop
     plugs:
       - audio-playback
       - home
       - opengl
       - removable-media
+      - network #for dependencycontrol
   move-scripts:
     command: bin/move_scripts.sh
+  install-depcontrol:
+    command: bin/install_depcontrol.sh
