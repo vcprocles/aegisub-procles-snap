@@ -1,6 +1,6 @@
 name: aegisub-procles
 base: core24
-version: 3.4.2-snap1.3
+version: 3.4.2-snap2
 summary: Advanced subtitle editor
 description: |
  Originally created as tool to make typesetting, particularly in anime
