@@ -1,12 +1,12 @@
 #!/bin/bash
 #check if config exists
+HOME_CURRENT="$(dirname "$HOME")/current"
 CONFIG_FILE="$HOME_CURRENT/.aegisub/config.json"
 if [[ ! -f "$CONFIG_FILE" ]]; then
     echo "Install failed. You should launch Aegisub at least once before initializing Automation scripting"
     exit 1
 fi
 #former move_scripts.sh
-HOME_CURRENT="$(dirname "$HOME")/current"
 echo "Creating directory for scripts $HOME_CURRENT/.aegisub/automation"
 mkdir -p "$HOME_CURRENT"/.aegisub/automation/
 echo "Moving default scripts..."
