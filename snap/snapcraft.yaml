@@ -20,7 +20,6 @@ confinement: strict
 platforms:
   amd64:
   arm64:
-      
 
 parts:
   wxwidgets:
@@ -44,22 +43,35 @@ parts:
       - libx11-dev
       - cmake
       - ninja-build
+    override-build: |
+      craftctl default
+      #fix symlinks and wxconfig
+      cd "$CRAFT_PART_INSTALL/usr/bin"
+      rm -f wx-config wxrc
+      ln -s "../lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/wx/config/gtk3-unicode-3.2" wx-config
+      ln -s wxrc-3.2 wxrc
+      WX_CONF_SCRIPT="$CRAFT_PART_INSTALL/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/wx/config/gtk3-unicode-3.2"
+      if [ -f "$WX_CONF_SCRIPT" ]; then
+        sed -i "s|^prefix=.*|prefix=\"$CRAFT_STAGE/usr\"|g" "$WX_CONF_SCRIPT"
+        sed -i "s|^exec_prefix=.*|exec_prefix=\"$CRAFT_STAGE/usr\"|g" "$WX_CONF_SCRIPT"
+      fi
+    prime:
+      - -usr/bin/wx-config
+      - -usr/bin/wxrc
+
   aegisub-procles:
     after: [wxwidgets]
     plugin: meson
     build-environment:
       - PATH: "$CRAFT_STAGE/usr/bin:$PATH"
-      - PKG_CONFIG_PATH: "$CRAFT_STAGE/usr/lib/pkgconfig:$CRAFT_STAGE/usr/lib/x86_64-linux-gnu/pkgconfig:$PKG_CONFIG_PATH"
+      - PKG_CONFIG_PATH: "$CRAFT_STAGE/usr/lib/pkgconfig:$CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/pkgconfig:$PKG_CONFIG_PATH"
       - WX_CONFIG: "$CRAFT_STAGE/usr/bin/wx-config"
     meson-parameters:
-    - --prefix=/usr/
-    - --buildtype=release
-    - --strip
-    - -Denable_update_checker=false
-    - -Dsystem_luajit=false
-    override-prime: |
-      sed -i 's@org.aegisub.Aegisub@/usr/share/icons/hicolor/scalable/apps/org.aegisub.Aegisub.svg@g' ../stage/usr/share/applications/org.aegisub.Aegisub.desktop
-      craftctl default
+      - --prefix=/usr
+      - --buildtype=release
+      - --strip
+      - -Denable_update_checker=false
+      - -Dsystem_luajit=false
     source-type: git
     source: https://github.com/TypesettingTools/Aegisub
     source-tag: v3.4.2
@@ -67,6 +79,7 @@ parts:
       craftctl default
       meson subprojects download luajit
       meson subprojects packagefiles --apply luajit
+      #fix version reporting in about box etc.
       VERSION_SCRIPT="$(find . -name version.sh | head -n 1)"
       if [ -n "$VERSION_SCRIPT" ]; then
         cat << 'EOF' > "$VERSION_SCRIPT"
@@ -84,73 +97,59 @@ parts:
       EOF
         chmod +x "$VERSION_SCRIPT"
       fi
-    override-build: |
-      cp -a "$CRAFT_STAGE/usr/." /usr/
+    override-prime: |
       craftctl default
+      sed -i 's@org.aegisub.Aegisub@/usr/share/icons/hicolor/scalable/apps/org.aegisub.Aegisub.svg@g' "$CRAFT_PRIME/usr/share/applications/org.aegisub.Aegisub.desktop"
     build-packages:
-    - libgl-dev
-    - libfreetype-dev
-    - libfontconfig1-dev
-    - libass-dev
-    - libboost-dev
-    - libboost-chrono-dev
-    - libboost-filesystem-dev
-    - libboost-locale-dev
-    - libboost-regex-dev
-    - libboost-system-dev
-    - libboost-thread-dev
-    - libffms2-dev
-    - intltool
-    - libhunspell-dev
-    - libfftw3-dev
-    - libuchardet-dev
-    - libpulse-dev
-    - libicu-dev
-    - autopoint
+      - libgl-dev
+      - libfreetype-dev
+      - libfontconfig1-dev
+      - libass-dev
+      - libboost-dev
+      - libboost-chrono-dev
+      - libboost-filesystem-dev
+      - libboost-locale-dev
+      - libboost-regex-dev
+      - libboost-system-dev
+      - libboost-thread-dev
+      - libffms2-dev
+      - intltool
+      - libhunspell-dev
+      - libfftw3-dev
+      - libuchardet-dev
+      - libpulse-dev
+      - libicu-dev
+      - autopoint
     stage-packages:
-    - luajit
-    - libass9
-    - libboost-chrono1.83.0
-    - libboost-filesystem1.83.0
-    - libboost-locale1.83.0
-    - libboost-regex1.83.0
-    - libboost-thread1.83.0
-    - libffms2-5
-    - libfftw3-double3
-    - libfontconfig1
-    - libgl1
-    - libhunspell-1.7-0
-    - libicu74
-    - libpulse0
-    - libsndio7.0
-    - libuchardet0
-    # for downloading depcontrol
-    - curl
-    - wget
-    - unzip
-    # for depcontrol itself
-    - binutils
-    # prime:
-    #   - usr/bin/*
-    #   - usr/lib/*
-    #   - usr/libexec/*
-    #   - usr/local/*
-    #   - usr/sbin/*
-    #   - usr/share/*
-    #   - -usr/share/doc/*
-    #   - -usr/share/man/*
-    #   - -usr/share/info/*
-    #   - -usr/share/icons/Adwaita/*
-    #   - -usr/share/icons/Humanity*
-    #   - -usr/share/icons/Yaru*
-    #   - -usr/lib/*/dri/*
-    #   - -usr/lib/*/libLLVM*.so*
-    #   - -usr/lib/*/libwayland-*.so*
-  move-scripts:
-    plugin: dump
-    source: .
-    organize:
-      move_scripts.sh: bin/
+      - libass9
+      - libboost-chrono1.83.0
+      - libboost-filesystem1.83.0
+      - libboost-locale1.83.0
+      - libboost-regex1.83.0
+      - libboost-thread1.83.0
+      - libffms2-5
+      - libfftw3-double3
+      - libfontconfig1
+      - libgl1
+      - libhunspell-1.7-0
+      - libicu74
+      - libpulse0
+      - libsndio7.0
+      - libuchardet0
+      #for downloading depcontrol
+      - curl
+      - wget
+      - unzip
+      #for depcontrol itself
+      - binutils
+      - luajit
+
+  # move-scripts:
+  #   plugin: dump
+  #   source: .
+  #   organize:
+  #     move_scripts.sh: bin/
+      
   install-depcontrol:
     plugin: dump
     source: .
@@ -161,10 +160,10 @@ apps:
   aegisub-procles:
     extensions: [gnome]
     environment:
-      LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/pulseaudio/ #dirty fix for pulse .so being not found
-      #should fix lua i hope
+      LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/pulseaudio/
+      #dependencycontrol needs this
       LUA_PATH: "$SNAP_USER_DATA/.aegisub/automation/include/?.lua;$SNAP_USER_DATA/.aegisub/automation/include/?/init.lua;$SNAP/usr/share/aegisub/automation/include/?.lua;$SNAP/usr/share/aegisub/automation/include/?/init.lua;;"
-      LUA_CPATH: "$SNAP_USER_DATA/.aegisub/automation/include/?.so;$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/lua/5.1/?.so;;"
+      LUA_CPATH: "$SNAP_USER_DATA/.aegisub/automation/include/?.so;$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/lua/5.1/?.so;;"
     command: usr/bin/aegisub
     desktop: usr/share/applications/org.aegisub.Aegisub.desktop
     common-id: aegisub.desktop
@@ -174,7 +173,7 @@ apps:
       - opengl
       - removable-media
       - network #for dependencycontrol
-  move-scripts:
-    command: bin/move_scripts.sh
-  install-depcontrol:
+  # move-scripts:
+  #   command: bin/move_scripts.sh
+  setup-automation:
     command: bin/install_depcontrol.sh
