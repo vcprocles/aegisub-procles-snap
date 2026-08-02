@@ -175,5 +175,5 @@ apps:
       - network #for dependencycontrol
   # move-scripts:
   #   command: bin/move_scripts.sh
-  setup-automation:
-    command: bin/install_depcontrol.sh
+setup-automation:
+    command: env /bin/bash "$SNAP/bin/install_depcontrol.sh"
