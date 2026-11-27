@@ -167,13 +167,14 @@ apps:
       LUA_CPATH: "$SNAP_USER_DATA/.aegisub/automation/include/?.so;$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/lua/5.1/?.so;;"
     command: usr/bin/aegisub
     desktop: usr/share/applications/org.aegisub.Aegisub.desktop
-    common-id: aegisub.desktop
+    common-id: org.aegisub.Aegisub
     plugs:
       - audio-playback
       - home
       - opengl
       - removable-media
       - network #for dependencycontrol
+      - mount-observe
   # move-scripts:
   #   command: bin/move_scripts.sh
   setup-automation:
